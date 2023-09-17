@@ -2,6 +2,79 @@
 {% block title %}Vote{% endblock %}
 
 {% block content %}
-<br>
-<h1 align="center">Vote for your mut</h1>
+<form method="POST" id="vote">
+    <br>
+    <h2 align="center">Vote for your Mut</h2>
+    <br>
+    <p class="lead" align="center">
+        Please select your preferences for your house. As a reminder, both votes are treated equally and make sure to double check your votes.
+    </p>
+    <br>
+    <div class="form-group">
+        <label for="first_vote"><h4>First Vote</h4></label>
+        <select class="form-select" id="first_vote" name="first_vote">
+            <option selected>Preference 1</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+        </select>
+    </div>
+    <br>
+    <div class="form-group">
+        <label for="second_vote"><h4>Second Vote</h4></label>
+        <select class="form-select" id="second_vote" name="second_vote">
+            <option selected>Preference 2</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+        </select>
+    </div>
+    <br>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
 {% endblock %}
+
+<!--
+    <div class="form-group">
+        <label for="email">Email Address</label>
+        <input
+            type="email"
+            class="form-control"
+            id="email"
+            name="email"
+            placeholder="Enter email"
+        />
+    </div>
+    <br>
+    <div class="form-group">
+        <label for="first_name">First Name</label>
+        <input
+            type="text"
+            class="form-control"
+            id="first_name"
+            name="first_name"
+            placeholder="Enter first name"
+        />
+    </div>
+    <br>
+    <div class="form-group">
+        <label for="password1">Password</label>
+        <input
+            type="password"
+            class="form-control"
+            id="password1"
+            name="password1"
+            placeholder="Enter password"
+        />
+    </div>
+    <br>
+    <div class="form-group">
+        <label for="password2">Confirm Password</label>
+        <input
+            type="password"
+            class="form-control"
+            id="password2"
+            name="password2"
+            placeholder="Confirm password"
+        />
+    </div> -->

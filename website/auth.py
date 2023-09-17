@@ -1,8 +1,10 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from .models import User
+from sqlalchemy import select
+from .models import User, Vote
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from flask_login import login_user, login_required, logout_user, current_user
+import re
 
 auth = Blueprint("auth", __name__)
 
@@ -43,11 +45,14 @@ def sign_up():
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
 
+        # Regular Expression to match email addresses
+        email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+
         user = User.query.filter_by(email=email).first()
         if user:
             flash("Email already exists.", category="error")
-        elif len(email) < 4:
-            flash("Email must be greater than 3 characters.", category="error")
+        elif not re.match(email_pattern, email):
+            flash("Not a valid email address.", category="error")
         elif len(first_name) < 2:
             flash("First name must be greater than 1 character.", category="error")
         elif password1 != password2:
@@ -68,7 +73,19 @@ def sign_up():
 
 
 @auth.route("/vote", methods=["GET", "POST"])
+@login_required
 def vote():
+    if request.method == "POST":
+        firstv = request.form.get("first_vote")
+        secondv = request.form.get("second_vote")
+        if firstv == secondv:
+            flash("Cannot vote for the same person twice.", category="error")
+        else:
+            new_vote = Vote(first_vote=firstv, second_vote=secondv, user_id=current_user.id)
+            db.session.add(new_vote)
+            db.session.commit()
+            flash("Vote submitted successfully.")
+
     return render_template("vote.html", user=current_user)
 
 @auth.route("/termsandconditions", methods=["GET", "POST"])

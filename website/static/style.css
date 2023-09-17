@@ -25,7 +25,7 @@ body {
 a {
     color: inherit;
     text-decoration: underline;
-    text-decoration-color: #6495ED;
+    text-decoration-color: var(--bs-body-color);
     text-decoration-thickness: 0.7mm;
 }
 
@@ -36,4 +36,9 @@ a {
 footer {
     position: absolute;
     bottom: 0;
+}
+
+.btn {
+    color: var(--bs-body-color);
+    background-color: transparent;
 }
