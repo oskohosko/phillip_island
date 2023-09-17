@@ -1,0 +1,39 @@
+body {
+    font-family: 'Lora', serif;
+}
+
+.container {
+    max-width: 900px;
+}
+
+.nav-item {
+    padding-right: 1.5em;
+    padding-left: 1.5em;
+    padding-top: 1em;
+    .nav-link {
+        padding-bottom: 0;
+        border-bottom-width: 2.8px;
+    }
+    font-size:larger;
+}
+
+.nav {
+    --bs-nav-link-color: var(--bs-body-color);
+    --bs-nav-link-hover-color: var(--bs-body-color);
+}
+
+a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: #6495ED;
+    text-decoration-thickness: 0.7mm;
+}
+
+.nav-link:hover {
+    text-decoration-color: inherit;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+}

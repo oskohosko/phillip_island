@@ -6,7 +6,6 @@ from flask_login import login_user, login_required, logout_user, current_user
 
 auth = Blueprint("auth", __name__)
 
-
 @auth.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -17,7 +16,6 @@ def login():
         # Filter for all users with this email field
         # Should only be one result
         user = User.query.filter_by(email=email).first()
-
         if user:
             # If passwords are the same
             if check_password_hash(user.password, password):
@@ -28,7 +26,6 @@ def login():
                 flash("Incorrect password, try again.", category="error")
         else:
             flash("Email does not exist.", category="error")
-
 
     return render_template("login.html", user=current_user)
 
@@ -47,7 +44,6 @@ def sign_up():
         password2 = request.form.get('password2')
 
         user = User.query.filter_by(email=email).first()
-
         if user:
             flash("Email already exists.", category="error")
         elif len(email) < 4:
@@ -69,3 +65,12 @@ def sign_up():
 
 
     return render_template("signup.html", user=current_user)
+
+
+@auth.route("/vote", methods=["GET", "POST"])
+def vote():
+    return render_template("vote.html", user=current_user)
+
+@auth.route("/termsandconditions", methods=["GET", "POST"])
+def tandc():
+    return render_template("termsandconditions.html", methods=["GET", "POST"], user=current_user)
