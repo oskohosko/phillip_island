@@ -35,7 +35,6 @@ def create_app():
     @login_manager.user_loader
     def load_user(id):
         return User.query.get(int(id))
-    
      # Populating our Names DB
     muts = ['Alex Roddam', 'Alex Stork', 'Cameron Clarke', 'Connor Beadman', 'Diego Disley', 'Dylan Laguerre', 'Geordie Psevdos', 'George Vasili', 'Jack Rider', 'James Hodson', 'John Mastoras', 'Josh Anderson', 'Luke Davies', 'Matt Courtney', 'Matt Pervan', 'Max Roker', 'Maxim Schulz', 'Michael Rao', 'Nick Taylor', 'Ollie Stevens', 'Oskar Hosken', 'Rohnan Madden', 'Ryan Walsh', 'Will Elliott']
 

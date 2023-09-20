@@ -7,7 +7,6 @@ class Names(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     signed_up = db.Column(db.Integer)
-    # users = db.relationship("User")
 
 class Vote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -20,6 +19,5 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(150), unique=True)
     password = db.Column(db.String(150))
     name = db.Column(db.String(150))
-    # name_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     votes = db.relationship("Vote")
 
