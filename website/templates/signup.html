@@ -6,6 +6,25 @@
     <br>
     <h3 align="center">Sign Up</h3>
     <div class="form-group">
+        <label for="name">Select Your Name:</label>
+        <select class="form-select" id="name" name="name">
+            {% for name in available_names %}
+            <option value="{{ name.id }}">{{ name.name }}</option>
+            {% endfor %}
+        </select>
+<!--         
+        <input
+            type="text"
+            class="form-control"
+            list="options"
+            id="name"
+            name="name"
+            placeholder="Enter first name"
+        />
+         -->
+    </div>
+    <br>
+    <div class="form-group">
         <label for="email">Email Address</label>
         <input
             type="email"
@@ -17,25 +36,18 @@
     </div>
     <br>
     <div class="form-group">
-        <label for="first_name">First Name</label>
-        <input
-            type="text"
-            class="form-control"
-            id="first_name"
-            name="first_name"
-            placeholder="Enter first name"
-        />
-    </div>
-    <br>
-    <div class="form-group">
-        <label for="password1">Password</label>
+        <label for="password1" class="form-label">Password</label>
         <input
             type="password"
             class="form-control"
+            aria-describedby="password_help"
             id="password1"
             name="password1"
             placeholder="Enter password"
         />
+        <div id="password_help" class="form-text">
+            Your password must be greater than 7 characters in length.
+        </div>
     </div>
     <br>
     <div class="form-group">

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from sqlalchemy import select
-from .models import User, Vote
+from .models import User, Vote, Names
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from flask_login import login_user, login_required, logout_user, current_user
@@ -39,9 +39,12 @@ def logout():
 
 @auth.route("/sign-up", methods=["GET", "POST"])
 def sign_up():
+
+    available_names = Names.query.filter_by(signed_up=0)
+
     if request.method == "POST":
         email = request.form.get('email')
-        first_name = request.form.get('first_name')
+        name = request.form.get('name')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
 
@@ -53,23 +56,24 @@ def sign_up():
             flash("Email already exists.", category="error")
         elif not re.match(email_pattern, email):
             flash("Not a valid email address.", category="error")
-        elif len(first_name) < 2:
-            flash("First name must be greater than 1 character.", category="error")
         elif password1 != password2:
             flash("Passwords don't match.", category="error")
         elif len(password1) < 7:
             flash("Password must be at least 7 characters.", category="error")
         else:
             # add user to DB
-            new_user = User(email=email, first_name=first_name, password=generate_password_hash(password1, method="sha256"))
+            new_name = Names.query.filter_by(id=name).first()
+            new_user = User(email=email, name=new_name.name, password=generate_password_hash(password1, method="sha256"))
+            new_name.signed_up = 1
             db.session.add(new_user)
             db.session.commit()
+
             login_user(new_user, remember=True)
             flash("Account created!", category="success")
             return redirect(url_for("views.home"))
 
 
-    return render_template("signup.html", user=current_user)
+    return render_template("signup.html", user=current_user, available_names=available_names)
 
 
 @auth.route("/vote", methods=["GET", "POST"])
@@ -78,7 +82,15 @@ def vote():
     if request.method == "POST":
         firstv = request.form.get("first_vote")
         secondv = request.form.get("second_vote")
-        if firstv == secondv:
+
+        current_id = current_user.id
+
+        # Checking if user has already voted.
+        existing_vote = Vote.query.filter_by(user_id=current_id).first()
+
+        if existing_vote:
+            flash("You have already voted.", category="error")
+        elif firstv == secondv:
             flash("Cannot vote for the same person twice.", category="error")
         else:
             new_vote = Vote(first_vote=firstv, second_vote=secondv, user_id=current_user.id)
