@@ -1,10 +1,16 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, Flask
 from sqlalchemy import select
 from .models import User, Vote, Names
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from flask_login import login_user, login_required, logout_user, current_user
 import re
+import smtplib
+import os
+from dotenv import load_dotenv
+from email.message import EmailMessage
+
+load_dotenv()
 
 auth = Blueprint("auth", __name__)
 
@@ -67,6 +73,18 @@ def sign_up():
             new_name.signed_up = 1
             db.session.add(new_user)
             db.session.commit()
+
+            # Mail stuff
+            msg = EmailMessage()
+            msg.set_content(f"Hi {new_name.name},\nThank you for signing up to the Mut Phillip Island House Voting Service.")
+            msg['Subject'] = "Sign Up Confirmation - Phillip Island House Voting."
+            msg['From'] = "oskarhosken@gmail.com"
+            msg["To"] = email
+            server = smtplib.SMTP("smtp.gmail.com", 587)
+            server.starttls()
+            server.login("oskarhosken@gmail.com", os.getenv("GMAIL_PASSWORD"))
+            server.send_message(msg)
+            server.quit()
 
             login_user(new_user, remember=True)
             flash("Account created!", category="success")
