@@ -1,6 +1,5 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, Flask
-from sqlalchemy import select
-from .models import User, Vote, Names
+from flask import Blueprint, render_template, request, flash, redirect, url_for
+from .models import Users, Votes, Names
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from flask_login import login_user, login_required, logout_user, current_user
@@ -8,7 +7,6 @@ import re
 import smtplib
 import os
 from dotenv import load_dotenv
-from email.message import EmailMessage
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
@@ -25,7 +23,7 @@ def login():
         # Looking for a specific entry
         # Filter for all users with this email field
         # Should only be one result
-        user = User.query.filter_by(email=email).first()
+        user = Users.query.filter_by(email=email).first()
         if user:
             # If passwords are the same
             if check_password_hash(user.password, password):
@@ -59,7 +57,7 @@ def sign_up():
         # Regular Expression to match email addresses
         email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
 
-        user = User.query.filter_by(email=email).first()
+        user = Users.query.filter_by(email=email).first()
         if user:
             flash("Email already exists.", category="error")
         elif not re.match(email_pattern, email):
@@ -71,7 +69,7 @@ def sign_up():
         else:
             # add user to DB
             new_name = Names.query.filter_by(id=name).first()
-            new_user = User(email=email, name=new_name.name, password=generate_password_hash(password1, method="sha256"))
+            new_user = Users(email=email, name=new_name.name, password=generate_password_hash(password1, method="sha256"))
             new_name.signed_up = 1
             db.session.add(new_user)
             db.session.commit()
@@ -82,7 +80,7 @@ def sign_up():
             server.login("oskarhosken@gmail.com", os.getenv("GMAIL_PASSWORD"))
 
             msg = MIMEMultipart()
-            msg['From'] = "Oskar Hosken <oskarhosken@gmail.com>"
+            msg['From'] = "Mut House Voting <oskarhosken@gmail.com>"
             msg['To'] = email
             msg['Subject'] = "Sign Up Confirmation - Phillip Island House Voting."
 
@@ -116,16 +114,36 @@ def vote():
         secondv = Names.query.filter_by(id=secondv_id).first().name
         current_id = current_user.id
 
+        current_email = Users.query.filter_by(id=current_id).first().email
+        current_name = Users.query.filter_by(id=current_id).first().name
+
         # Checking if user has already voted.
-        existing_vote = Vote.query.filter_by(user_id=current_id).first()
+        existing_vote = Votes.query.filter_by(user_id=current_id).first()
         if existing_vote:
             flash("You have already voted.", category="error")
         elif firstv == secondv:
             flash("Cannot vote for the same person twice.", category="error")
         else:
-            new_vote = Vote(first_vote=firstv, second_vote=secondv, user_id=current_user.id)
+            new_vote = Votes(first_vote=firstv, second_vote=secondv, user_id=current_user.id)
             db.session.add(new_vote)
             db.session.commit()
+
+            server = smtplib.SMTP("smtp.gmail.com", 587)
+            server.starttls()
+            server.login("oskarhosken@gmail.com", os.getenv("GMAIL_PASSWORD"))
+
+            msg = MIMEMultipart()
+            msg['From'] = "Mut House Voting <oskarhosken@gmail.com>"
+            msg['To'] = current_email
+            msg['Subject'] = "Voting Confirmation"
+
+            email_body = f"Hi {current_name},\nYour votes have been submitted. Here they are for reference:\n1. {firstv}.\n2. {secondv}."
+
+            msg.attach(MIMEText(email_body, 'plain'))
+
+            server.sendmail("oskarhosken@gmail.com", current_email, msg.as_string())
+            server.quit()
+
             flash("Vote submitted successfully.")
 
     return render_template("vote.html", user=current_user, vote_names = vote_names)

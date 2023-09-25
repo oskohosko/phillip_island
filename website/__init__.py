@@ -23,7 +23,7 @@ def create_app():
     app.register_blueprint(views, url_prefix="/")
     app.register_blueprint(auth, url_prefix="/")
 
-    from .models import User, Vote, Names
+    from .models import Users, Names
 
     create_database(app)
 
@@ -34,7 +34,7 @@ def create_app():
     # Looking for a user and use function to load user
     @login_manager.user_loader
     def load_user(id):
-        return User.query.get(int(id))
+        return Users.query.get(int(id))
      # Populating our Names DB
     muts = ['Alex Roddam', 'Alex Stork', 'Cameron Clarke', 'Connor Beadman', 'Diego Disley', 'Dylan Laguerre', 'Geordie Psevdos', 'George Vasili', 'Jack Rider', 'James Hodson', 'John Mastoras', 'Josh Anderson', 'Luke Davies', 'Matt Courtney', 'Matt Pervan', 'Max Roker', 'Maxim Schulz', 'Michael Rao', 'Nick Taylor', 'Ollie Stevens', 'Oskar Hosken', 'Rohnan Madden', 'Ryan Walsh', 'Will Elliott']
 

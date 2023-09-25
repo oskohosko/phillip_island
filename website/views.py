@@ -1,9 +1,5 @@
-from flask import Blueprint, render_template, request, flash, jsonify
-from flask_login import login_required, current_user
-from .models import Vote
-from . import db
-import json
-
+from flask import Blueprint, render_template
+from flask_login import current_user
 
 views = Blueprint('views', __name__)
 
