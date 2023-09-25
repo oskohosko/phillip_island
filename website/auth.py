@@ -9,6 +9,8 @@ import smtplib
 import os
 from dotenv import load_dotenv
 from email.message import EmailMessage
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 load_dotenv()
 
@@ -75,15 +77,20 @@ def sign_up():
             db.session.commit()
 
             # Mail stuff
-            msg = EmailMessage()
-            msg.set_content(f"Hi {new_name.name},\nThank you for signing up to the Mut Phillip Island House Voting Service.")
-            msg['Subject'] = "Sign Up Confirmation - Phillip Island House Voting."
-            msg['From'] = "oskarhosken@gmail.com"
-            msg["To"] = email
             server = smtplib.SMTP("smtp.gmail.com", 587)
             server.starttls()
             server.login("oskarhosken@gmail.com", os.getenv("GMAIL_PASSWORD"))
-            server.send_message(msg)
+
+            msg = MIMEMultipart()
+            msg['From'] = "Oskar Hosken <oskarhosken@gmail.com>"
+            msg['To'] = email
+            msg['Subject'] = "Sign Up Confirmation - Phillip Island House Voting."
+
+            email_body = f"Hi {new_name.name},\nThank you for signing up to the Mut Phillip Island House Voting Service."
+
+            msg.attach(MIMEText(email_body, 'plain'))
+
+            server.sendmail("oskarhosken@gmail.com", email, msg.as_string())
             server.quit()
 
             login_user(new_user, remember=True)
