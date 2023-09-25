@@ -102,7 +102,7 @@ def sign_up():
 @auth.route("/vote", methods=["GET", "POST"])
 @login_required
 def vote():
-
+    all_voted = False
     # Getting all the names we can vote for (except our own)
     vote_names = Names.query.filter(Names.name != current_user.name).all()
 
@@ -128,6 +128,8 @@ def vote():
             db.session.add(new_vote)
             db.session.commit()
 
+            # Email stuff
+            # Mailing confirmation of votes
             server = smtplib.SMTP("smtp.gmail.com", 587)
             server.starttls()
             server.login("oskarhosken@gmail.com", os.getenv("GMAIL_PASSWORD"))
@@ -146,7 +148,15 @@ def vote():
 
             flash("Vote submitted successfully.")
 
-    return render_template("vote.html", user=current_user, vote_names = vote_names)
+    # Checking if everyone has voted
+    all_votes = Votes.query.all()
+    all_names = Names.query.all()
+
+    # This means that everyone has voted.
+    if len(all_votes) == len(all_names):
+        all_voted = True
+
+    return render_template("vote.html", user=current_user, vote_names=vote_names, all_voted=all_voted)
 
 @auth.route("/termsandconditions", methods=["GET", "POST"])
 def tandc():

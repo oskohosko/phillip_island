@@ -9,8 +9,8 @@ class Names(db.Model):
 
 class Votes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    first_vote = db.Column(db.String(100))
-    second_vote = db.Column(db.String(100))
+    first_vote = db.Column(db.Integer)
+    second_vote = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 
 class Users(db.Model, UserMixin):

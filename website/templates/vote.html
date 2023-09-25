@@ -2,6 +2,8 @@
 {% block title %}Vote{% endblock %}
 
 {% block content %}
+
+{% if not all_voted %}
 <form method="POST" id="vote">
     <br>
     <h2 align="center">Vote for your Mut</h2>
@@ -36,4 +38,10 @@
     <br>
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
+{% else %}
+<br>
+<h1 align="center">Everyone Has Voted.</h1>
+<br>
+<p class="lead" align="center">Check your email for your house.</p>
+{% endif %}
 {% endblock %}
