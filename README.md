@@ -11,3 +11,5 @@ For the local version, I store all of the data in a SQLite database.
 
 For the deployed version, I deployed it using Heroku and updated the SQLite database to a Postgres database.
 The link to the current deployed version is here: https://mut-house-voting-cb1eb2f287b9.herokuapp.com/
+
+Edit: Removed the app as I was paying $10p/m, oops.
